@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: backend
+  template:
+    metadata:
+      labels:
+        app: backend
+    spec:
+      containers:
+        - name: backend
+          image: ghcr.io/mrc99varma/full-stack-fastapi-template-backend:latest
+          env:
+            - name: DOMAIN
+              value: localhost
+            - name: ENVIRONMENT
+              value: production
+            - name: BACKEND_CORS_ORIGINS
+              value: '["http://localhost", "https://localhost"]'
+            - name: SECRET_KEY
+              value: changethis_secret_key_for_jwt_tokens_32bytes
+            - name: FIRST_SUPERUSER
+              value: admin@example.com
+            - name: FIRST_SUPERUSER_PASSWORD
+              value: changethis
+            - name: POSTGRES_SERVER
+              value: postgres
+            - name: POSTGRES_PORT
+              value: "5432"
+            - name: POSTGRES_DB
+              value: app
+            - name: POSTGRES_USER
+              value: postgres
+            - name: POSTGRES_PASSWORD
+              value: changethis
+          ports:
+            - containerPort: 8000
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+  selector:
+    app: backend
