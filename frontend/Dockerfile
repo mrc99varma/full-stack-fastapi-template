@@ -2,14 +2,14 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copy package files from frontend directory
+# Copy package files into /app
 COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm install
 
-# Copy source code
-COPY frontend/ ./
+# Copy all frontend files directly into /app (not a nested frontend folder)
+COPY frontend/. .
 
-# Build the app directly in /app
+# Build the app outputting to /app/dist
 RUN npm run build
 
 # Stage 2: Serve with Nginx
