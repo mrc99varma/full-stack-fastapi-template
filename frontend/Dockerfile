@@ -2,16 +2,16 @@
 FROM node:20-alpine AS build
 WORKDIR /app
 
-# Copy package files and install dependencies
-COPY frontend/package.json frontend/package-lock.json* frontend/bun.lock* ./
+# Copy package files
+COPY frontend/package.json frontend/package-lock.json* ./
 RUN npm install
 
-# Copy application source code and build
-COPY frontend/ ./
-RUN npm run build
+# Copy source code and build
+COPY frontend/ ./frontend/
+RUN cd frontend && npm run build
 
 # Stage 2: Serve with Nginx
 FROM nginx:alpine
-COPY --from=build /app/dist /usr/share/nginx/html
+COPY --from=build /app/frontend/dist /usr/share/nginx/html
 EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
